@@ -21,7 +21,6 @@
   UPDATE 16 MAY 2017 by Knutella - Fixed MQTT disconnects when wifi drops by moving around Reconnect and adding a software reset of MCU
              
   UPDATE 23 MAY 2017 - The MQTT_MAX_PACKET_SIZE parameter may not be setting appropriately do to a bug in the PubSub library. If the MQTT messages are not being transmitted as expected please you may need to change the MQTT_MAX_PACKET_SIZE parameter in "PubSubClient.h" directly.
-  UPDATE 3-1-2018 Adjusted for EMP sensor on tindie https://www.tindie.com/products/SMDKing/emp-sensor-detect-lightning-and-other-phenomena-/
 */
 
 
@@ -459,9 +458,11 @@ void loop() {
 
   if (!inFade) {
 
+    /*
     float newTempValue = dht.readTemperature(true); //to use celsius remove the true text inside the parentheses  
     float newHumValue = dht.readHumidity();
-
+    */
+    
     //PIR CODE
     if(interruptCounter>0){
  
@@ -474,6 +475,10 @@ void loop() {
       else {
         pirValue=LOW;
       }
+
+    if (checkBoundSensor(newLDR, LDR, diffLDR)) {
+      LDR = newLDR;
+    }
     //pirValue = digitalRead(PIRPIN); //read state of the
 
     if (pirValue == LOW && pirStatus != 1) {
@@ -483,13 +488,15 @@ void loop() {
     }
 
     else if (pirValue == HIGH && pirStatus != 2) {
-      motionStatus = "emp detected";
+      motionStatus = "emp";
       sendState();
       pirStatus = 2;
+      delay(1000);
     }
 
-    delay(100);
+    
 
+    /*
     if (checkBoundSensor(newTempValue, tempValue, diffTEMP)) {
       tempValue = newTempValue;
       sendState();
@@ -503,19 +510,14 @@ void loop() {
 
     
     
-    if(interruptCounterA>0){
- 
-      interruptCounterA--;
-      numberOfInterruptsA++;
-      Serial.print("An interrupt has occurred. Total: ");
-      Serial.println(numberOfInterruptsA);
-      }
+    
 
     if (checkBoundSensor(newLDR, LDR, diffLDR)) {
       LDR = newLDR;
       sendState();
       //newLDR = analogRead(LDRPIN);
     }
+    */
 
   }
 
